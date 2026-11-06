@@ -24,11 +24,12 @@ jobs:
       - name: Unit tests (game logic)
         run: ./gradlew :game:test --stacktrace
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+      # Release build: not debuggable, so Compose runs at full speed (debug builds are much slower).
+      - name: Build release APK
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk MahjongZen.apk
+        run: cp app/build/outputs/apk/release/app-release.apk MahjongZen.apk
 
       - uses: actions/upload-artifact@v4
         with:
@@ -42,5 +43,5 @@ jobs:
           name: Mahjong Zen Testbuild ${{ github.run_number }}
           target_commitish: ${{ github.sha }}
           prerelease: true
-          body: Automatisch gebaute Debug-APK. Auf dem Handy herunterladen, antippen und Installation aus unbekannten Quellen erlauben.
+          body: Automatisch gebaute Release-APK (mit Debug-Schlüssel signiert). Auf dem Handy herunterladen, antippen und Installation aus unbekannten Quellen erlauben.
           files: MahjongZen.apk

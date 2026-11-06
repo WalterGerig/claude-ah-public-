@@ -19,4 +19,5 @@ data class AppSettings(
     val defaultDifficulty: Difficulty = Difficulty.MEDIUM,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val largeTiles: Boolean = false,
+    val reduceMotion: Boolean = false,
 )

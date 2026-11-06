@@ -1,33 +1,15 @@
 package com.mahjongzen.ui.settings
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,10 +34,27 @@ import com.mahjongzen.data.settings.TableBackground
 import com.mahjongzen.data.settings.ThemeMode
 import com.mahjongzen.data.settings.TileStyle
 import com.mahjongzen.game.model.Difficulty
+import com.mahjongzen.game.model.TileFace
+import com.mahjongzen.ui.components.TableTextures
+import com.mahjongzen.ui.components.TilePreview
+import com.mahjongzen.ui.components.Zen
+import com.mahjongzen.ui.components.ZenBlock
+import com.mahjongzen.ui.components.ZenConfirmDialog
+import com.mahjongzen.ui.components.ZenDivider
+import com.mahjongzen.ui.components.ZenPage
+import com.mahjongzen.ui.components.ZenPreviewChoice
+import com.mahjongzen.ui.components.ZenRow
+import com.mahjongzen.ui.components.ZenSection
+import com.mahjongzen.ui.components.ZenSegmented
+import com.mahjongzen.ui.components.ZenSlider
+import com.mahjongzen.ui.components.ZenSwitch
 import com.mahjongzen.ui.components.backgroundName
 import com.mahjongzen.ui.components.difficultyName
+import com.mahjongzen.ui.components.drawTable
+import com.mahjongzen.ui.components.paletteFor
 import com.mahjongzen.ui.components.themeName
 import com.mahjongzen.ui.components.tileStyleName
+import com.mahjongzen.ui.components.windLetters
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(private val container: AppContainer) : ViewModel() {
@@ -74,109 +73,126 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(container: AppContainer, settings: AppSettings, onBack: () -> Unit) {
     val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(container))
+    SettingsContent(settings, vm::update, vm::resetStatistics, onBack)
+}
+
+/** Stateless settings page (previewable): [update] persists a change, [onResetStats] clears the statistics. */
+@Composable
+fun SettingsContent(
+    settings: AppSettings,
+    update: (suspend SettingsRepository.() -> Unit) -> Unit,
+    onResetStats: () -> Unit,
+    onBack: () -> Unit,
+) {
     var confirmReset by remember { mutableStateOf(false) }
+    val textures = remember { TableTextures() }
+    val letters = windLetters()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back)) } },
-            )
-        },
-    ) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(Modifier.widthIn(max = 720.dp).fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-                Section(stringResource(R.string.section_sound))
-                SwitchRow(stringResource(R.string.sound_effects), null, settings.soundOn) { v -> vm.update { setSoundOn(v) } }
-                SliderRow(stringResource(R.string.sound_volume), settings.soundVolume, settings.soundOn) { v -> vm.update { setSoundVolume(v) } }
-                SwitchRow(stringResource(R.string.music), null, settings.musicOn) { v -> vm.update { setMusicOn(v) } }
-                SliderRow(stringResource(R.string.music_volume), settings.musicVolume, settings.musicOn) { v -> vm.update { setMusicVolume(v) } }
-                Text(stringResource(R.string.sound_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    ZenPage(title = stringResource(R.string.settings_title), onBack = onBack) {
+        // ---------------- Spiel ----------------
+        ZenSection(stringResource(R.string.section_gameplay)) {
+            ZenBlock(stringResource(R.string.default_difficulty)) {
+                ZenSegmented(Difficulty.entries, settings.defaultDifficulty, { difficultyName(it) }) { v -> update { setDefaultDifficulty(v) } }
+            }
+            ZenDivider()
+            ZenRow(stringResource(R.string.highlight_free), stringResource(R.string.highlight_free_desc)) {
+                ZenSwitch(settings.highlightFree) { v -> update { setHighlightFree(v) } }
+            }
+            ZenDivider()
+            ZenRow(stringResource(R.string.show_timer)) {
+                ZenSwitch(settings.showTimer) { v -> update { setShowTimer(v) } }
+            }
+        }
 
-                Section(stringResource(R.string.section_gameplay))
-                SwitchRow(stringResource(R.string.haptics), null, settings.haptics) { v -> vm.update { setHaptics(v) } }
-                SwitchRow(stringResource(R.string.highlight_free), stringResource(R.string.highlight_free_desc), settings.highlightFree) { v -> vm.update { setHighlightFree(v) } }
-                SwitchRow(stringResource(R.string.show_timer), null, settings.showTimer) { v -> vm.update { setShowTimer(v) } }
-                ChoiceRow(stringResource(R.string.default_difficulty), Difficulty.entries, settings.defaultDifficulty, { difficultyName(it) }) { v -> vm.update { setDefaultDifficulty(v) } }
-
-                Section(stringResource(R.string.section_appearance))
-                ChoiceRow(stringResource(R.string.theme), ThemeMode.entries, settings.themeMode, { themeName(it) }) { v -> vm.update { setThemeMode(v) } }
-                ChoiceRow(stringResource(R.string.background), TableBackground.entries, settings.background, { backgroundName(it) }) { v -> vm.update { setBackground(v) } }
-                ChoiceRow(stringResource(R.string.tile_style), TileStyle.entries, settings.tileStyle, { tileStyleName(it) }) { v -> vm.update { setTileStyle(v) } }
-                SwitchRow(stringResource(R.string.large_tiles), stringResource(R.string.large_tiles_desc), settings.largeTiles) { v -> vm.update { setLargeTiles(v) } }
-
-                Section(stringResource(R.string.section_language))
-                val current = AppCompatDelegate.getApplicationLocales().toLanguageTags().substringBefore('-').substringBefore(',')
+        // ---------------- Darstellung ----------------
+        ZenSection(stringResource(R.string.section_appearance)) {
+            ZenBlock(stringResource(R.string.background)) {
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    for (bg in TableBackground.entries) {
+                        ZenPreviewChoice(backgroundName(bg), bg == settings.background, { update { setBackground(bg) } }) {
+                            Canvas(Modifier.fillMaxSize()) { drawTable(bg, textures) }
+                        }
+                    }
+                }
+            }
+            ZenDivider()
+            ZenBlock(stringResource(R.string.tile_style)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    for (style in TileStyle.entries) {
+                        val palette = remember(style) { paletteFor(style) }
+                        ZenPreviewChoice(tileStyleName(style), style == settings.tileStyle, { update { setTileStyle(style) } }) {
+                            Box(Modifier.fillMaxSize().background(Zen.Track)) {
+                                Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                                    TilePreview(TileFace.DRAGON_RED, palette, letters, Modifier.size(width = 30.dp, height = 40.dp))
+                                    TilePreview(TileFace.DOT_5, palette, letters, Modifier.size(width = 30.dp, height = 40.dp))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ZenDivider()
+            ZenBlock(stringResource(R.string.theme)) {
+                ZenSegmented(ThemeMode.entries, settings.themeMode, { themeName(it) }) { v -> update { setThemeMode(v) } }
+            }
+            ZenDivider()
+            ZenRow(stringResource(R.string.large_tiles), stringResource(R.string.large_tiles_desc)) {
+                ZenSwitch(settings.largeTiles) { v -> update { setLargeTiles(v) } }
+            }
+            ZenDivider()
+            ZenRow(stringResource(R.string.reduce_motion), stringResource(R.string.reduce_motion_desc)) {
+                ZenSwitch(settings.reduceMotion) { v -> update { setReduceMotion(v) } }
+            }
+            ZenDivider()
+            ZenBlock(stringResource(R.string.section_language)) {
+                val current = AppCompatDelegate.getApplicationLocales().toLanguageTags().substringBefore(',').substringBefore('-')
                 val languages = listOf("" to stringResource(R.string.language_system), "de" to "Deutsch", "en" to "English")
-                ChoiceRow(null, languages.map { it.first }, current, { tag -> languages.first { it.first == tag }.second }) { tag ->
+                ZenSegmented(languages.map { it.first }, current, { tag -> languages.first { it.first == tag }.second }) { tag ->
                     AppCompatDelegate.setApplicationLocales(
                         if (tag.isEmpty()) LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(tag),
                     )
                 }
-
-                Section(stringResource(R.string.section_data))
-                OutlinedButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.stats_reset)) }
-                Text(
-                    stringResource(R.string.about), style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 16.dp),
-                )
             }
+        }
+
+        // ---------------- Ton & Haptik ----------------
+        ZenSection(stringResource(R.string.section_sound), footer = stringResource(R.string.sound_note)) {
+            ZenRow(stringResource(R.string.sound_effects)) {
+                ZenSwitch(settings.soundOn) { v -> update { setSoundOn(v) } }
+            }
+            ZenBlock(stringResource(R.string.sound_volume)) {
+                ZenSlider(settings.soundVolume, settings.soundOn) { v -> update { setSoundVolume(v) } }
+            }
+            ZenDivider()
+            ZenRow(stringResource(R.string.music)) {
+                ZenSwitch(settings.musicOn) { v -> update { setMusicOn(v) } }
+            }
+            ZenBlock(stringResource(R.string.music_volume)) {
+                ZenSlider(settings.musicVolume, settings.musicOn) { v -> update { setMusicVolume(v) } }
+            }
+            ZenDivider()
+            ZenRow(stringResource(R.string.haptics)) {
+                ZenSwitch(settings.haptics) { v -> update { setHaptics(v) } }
+            }
+        }
+
+        // ---------------- Daten ----------------
+        ZenSection(stringResource(R.string.section_data), footer = stringResource(R.string.about)) {
+            ZenRow(stringResource(R.string.stats_reset), titleColor = Zen.Danger, onClick = { confirmReset = true })
         }
     }
 
     if (confirmReset) {
-        AlertDialog(
-            onDismissRequest = { confirmReset = false },
-            title = { Text(stringResource(R.string.stats_reset_title)) },
-            text = { Text(stringResource(R.string.stats_reset_message)) },
-            confirmButton = { TextButton(onClick = { vm.resetStatistics(); confirmReset = false }) { Text(stringResource(R.string.stats_reset_confirm)) } },
-            dismissButton = { TextButton(onClick = { confirmReset = false }) { Text(stringResource(R.string.cancel)) } },
+        ZenConfirmDialog(
+            title = stringResource(R.string.stats_reset_title),
+            message = stringResource(R.string.stats_reset_message),
+            confirm = stringResource(R.string.stats_reset_confirm),
+            onConfirm = { onResetStats(); confirmReset = false },
+            onDismiss = { confirmReset = false },
+            destructive = true,
         )
-    }
-}
-
-@Composable
-private fun Section(title: String) {
-    HorizontalDivider(Modifier.padding(top = 16.dp, bottom = 8.dp))
-    Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(vertical = 4.dp))
-}
-
-@Composable
-private fun SwitchRow(title: String, description: String?, checked: Boolean, onChange: (Boolean) -> Unit) {
-    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            if (description != null) Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Switch(checked = checked, onCheckedChange = onChange)
-    }
-}
-
-@Composable
-private fun SliderRow(title: String, value: Float, enabled: Boolean, onChange: (Float) -> Unit) {
-    var local by remember(value) { mutableStateOf(value) }
-    Column(Modifier.fillMaxWidth()) {
-        Text(title, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Slider(value = local, onValueChange = { local = it }, onValueChangeFinished = { onChange(local) }, enabled = enabled)
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun <T> ChoiceRow(title: String?, options: List<T>, selected: T, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-        if (title != null) Text(title, style = MaterialTheme.typography.bodyLarge)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            for (o in options) {
-                FilterChip(selected = o == selected, onClick = { onSelect(o) }, label = { Text(label(o)) })
-            }
-        }
     }
 }

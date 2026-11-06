@@ -113,7 +113,7 @@
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
-    <string name="section_sound">Sound</string>
+    <string name="section_sound">Sound &amp; haptics</string>
     <string name="sound_effects">Sound effects</string>
     <string name="sound_volume">Effects volume</string>
     <string name="music">Music</string>
@@ -172,4 +172,7 @@
     <string name="wind_letter_south">S</string>
     <string name="wind_letter_west">W</string>
     <string name="wind_letter_north">N</string>
+    <string name="reduce_motion">Reduce motion</string>
+    <string name="reduce_motion_desc">Shorter, calmer animations (e.g. a simple fade when shuffling)</string>
+    <string name="reset_view">Fit board to screen</string>
 </resources>

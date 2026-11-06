@@ -16,7 +16,12 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.inset
 import com.mahjongzen.data.settings.TableBackground
 import kotlin.math.max
 import kotlin.math.min
@@ -110,4 +115,40 @@ private fun DrawScope.woodRim(t: Float) {
     // inner edge: dark shadow + subtle highlight
     drawRect(Color(0x66000000), topLeft = Offset(t, t), size = Size(w - 2 * t, h - 2 * t), style = Stroke(t * 0.25f))
     drawRect(Color(0x22FFFFFF), topLeft = Offset(t * 0.15f, t * 0.15f), size = Size(w - 0.3f * t, h - 0.3f * t), style = Stroke(1.5f))
+}
+
+/** Calm dark floor around the table (visible at the screen edges and around the table). */
+fun DrawScope.drawFloor(tex: TableTextures) {
+    drawRect(Brush.radialGradient(listOf(Color(0xFF2A211A), Color(0xFF17120E)), center = center, radius = max(size.width, size.height) * 0.8f))
+    drawRect(tex.noiseBrush, alpha = 0.25f)
+}
+
+@Composable
+fun FloorBackgroundView(modifier: Modifier = Modifier) {
+    val tex = remember { TableTextures() }
+    Canvas(modifier.fillMaxSize()) { drawFloor(tex) }
+}
+
+/**
+ * The game "world": floor, the table's soft shadow and the table itself (inset by [margin],
+ * rounded corners). Everything scales together when the camera zooms.
+ */
+fun DrawScope.drawWorldTable(bg: TableBackground, tex: TableTextures, margin: Float) {
+    drawFloor(tex)
+    val corner = CornerRadius(margin * 1.4f)
+    for (k in 1..4) {
+        val s = margin * 0.18f * k
+        drawRoundRect(
+            Color.Black.copy(alpha = 0.10f), topLeft = Offset(margin - s * 0.5f, margin + s * 0.3f),
+            size = Size(size.width - 2 * margin + s, size.height - 2 * margin + s), cornerRadius = corner,
+        )
+    }
+    val path = Path().apply {
+        addRoundRect(RoundRect(margin, margin, size.width - margin, size.height - margin, corner))
+    }
+    clipPath(path) {
+        inset(margin, margin, margin, margin) {
+            drawTable(bg, tex)
+        }
+    }
 }

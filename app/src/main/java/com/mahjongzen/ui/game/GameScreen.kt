@@ -77,13 +77,14 @@ import com.mahjongzen.data.settings.AppSettings
 import com.mahjongzen.game.engine.Seeds
 import com.mahjongzen.game.model.TileFace
 import com.mahjongzen.ui.components.Haptic
-import com.mahjongzen.ui.components.TableBackgroundView
+import com.mahjongzen.ui.components.FloorBackgroundView
 import com.mahjongzen.ui.components.difficultyName
 import com.mahjongzen.ui.components.faceName
 import com.mahjongzen.ui.components.formatTime
 import com.mahjongzen.ui.components.haptic
 import com.mahjongzen.ui.components.layoutName
 import com.mahjongzen.ui.components.windLetters
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.math.sin
@@ -106,6 +107,7 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
     var popup by remember { mutableStateOf<ScorePopup?>(null) }
     var confetti by remember { mutableIntStateOf(0) }
     var blockedDismissed by remember { mutableStateOf(false) }
+    var shuffleAnim by remember { mutableStateOf<ShuffleAnimation?>(null) }
 
     val msgNoHints = stringResource(R.string.hint_none_left)
     val msgUnsolvable = stringResource(R.string.shuffle_unsolvable)
@@ -154,6 +156,7 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
                         effects.onRemoved(
                             e.a, e.b, e.faceA, e.faceB,
                             a.x - a.z * 0.2f, a.y - a.z * 0.15f, b.x - b.z * 0.2f, b.y - b.z * 0.15f, combo, now,
+                            reduced = currentSettings.reduceMotion,
                         )
                     }
                     popup = ScorePopup((popup?.id ?: 0) + 1, e.points, combo)
@@ -162,8 +165,21 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
                 is GameEvent.Hint -> container.sound.play(Sfx.HINT)
                 GameEvent.NoHintsLeft -> scope.launch { snackbar.showSnackbar(msgNoHints) }
                 is GameEvent.Shuffled -> {
-                    container.sound.play(Sfx.SHUFFLE)
                     blockedDismissed = false
+                    val l = currentLayout
+                    val reduced = currentSettings.reduceMotion
+                    if (l != null) {
+                        val anim = ShuffleAnimation(e.oldFaces, e.newFaces, l, now, reduced)
+                        shuffleAnim = anim
+                        scope.launch {
+                            // sound + light vibration when the tiles land on the pile
+                            if (!reduced) delay(anim.gatherEnd / 1_000_000L)
+                            container.sound.play(Sfx.SHUFFLE)
+                            view.haptic(Haptic.TICK, currentSettings.haptics)
+                            delay(((anim.total - (if (reduced) 0L else anim.gatherEnd)) / 1_000_000L) + 50L)
+                            if (shuffleAnim === anim) shuffleAnim = null
+                        }
+                    }
                     if (!e.solvable) scope.launch { snackbar.showSnackbar(msgUnsolvable) }
                 }
                 GameEvent.Undone -> {
@@ -173,7 +189,7 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
                 GameEvent.Won -> {
                     container.sound.play(Sfx.WIN)
                     view.haptic(Haptic.HEAVY, hapticsOn)
-                    confetti++
+                    if (!currentSettings.reduceMotion) confetti++
                 }
                 GameEvent.Blocked -> view.haptic(Haptic.REJECT, hapticsOn)
             }
@@ -185,7 +201,7 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
     }
 
     Box(Modifier.fillMaxSize()) {
-        TableBackgroundView(settings.background)
+        FloorBackgroundView()
         val game = ui.game
         val layout = ui.layout
         if (ui.loading || game == null || layout == null) {
@@ -201,8 +217,8 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
                     Box(mod) {
                         BoardView(
                             layout = layout, faces = game.faces, free = ui.free, selected = ui.selected, hint = ui.hint,
-                            settings = settings, effects = effects, windLetters = letters,
-                            faceNames = { names[it.ordinal] }, onTap = vm::onTileTapped,
+                            settings = settings, effects = effects, shuffle = shuffleAnim, inputEnabled = !ui.shuffling,
+                            windLetters = letters, faceNames = { names[it.ordinal] }, onTap = vm::onTileTapped,
                         )
                         ScorePopupView(popup, Modifier.align(Alignment.TopCenter).padding(top = 8.dp))
                     }
@@ -233,7 +249,7 @@ fun GameScreen(container: AppContainer, settings: AppSettings, onExit: () -> Uni
                     onMenu = { vm.resume(); onExit() },
                 )
             }
-            if (ui.blocked && !ui.paused && !blockedDismissed) {
+            if (ui.blocked && !ui.paused && !ui.shuffling && !blockedDismissed) {
                 BlockedDialog(
                     canUndo = game.canUndo,
                     onShuffle = vm::shuffle,
@@ -298,9 +314,9 @@ private fun BottomBar(ui: GameUiState, vm: GameViewModel) {
     val g = ui.game ?: return
     Surface(color = HudColor, shape = RoundedCornerShape(24.dp), modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp)) {
         Row(Modifier.padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-            ActionButton(Icons.Rounded.Lightbulb, stringResource(R.string.game_hint), ui.hintsRemaining != 0 && !g.won, ui.hintsRemaining, vm::hint)
-            ActionButton(Icons.Rounded.Shuffle, stringResource(R.string.game_shuffle), !g.won, null, vm::shuffle)
-            ActionButton(Icons.AutoMirrored.Rounded.Undo, stringResource(R.string.game_undo), g.canUndo, null, vm::undo)
+            ActionButton(Icons.Rounded.Lightbulb, stringResource(R.string.game_hint), ui.hintsRemaining != 0 && !g.won && !ui.shuffling, ui.hintsRemaining, vm::hint)
+            ActionButton(Icons.Rounded.Shuffle, stringResource(R.string.game_shuffle), !g.won && !ui.shuffling, null, vm::shuffle)
+            ActionButton(Icons.AutoMirrored.Rounded.Undo, stringResource(R.string.game_undo), g.canUndo && !ui.shuffling, null, vm::undo)
         }
     }
 }
@@ -321,9 +337,9 @@ private fun SidePanel(ui: GameUiState, settings: AppSettings, vm: GameViewModel,
                 "${layoutName(g.layoutType)} · ${difficultyName(g.difficulty)}\n${if (g.daily) stringResource(R.string.game_daily) else Seeds.format(g.seed)}",
                 color = HudText.copy(alpha = 0.6f), fontSize = 10.sp, lineHeight = 13.sp,
             )
-            ActionButton(Icons.Rounded.Lightbulb, stringResource(R.string.game_hint), ui.hintsRemaining != 0 && !g.won, ui.hintsRemaining, vm::hint)
-            ActionButton(Icons.Rounded.Shuffle, stringResource(R.string.game_shuffle), !g.won, null, vm::shuffle)
-            ActionButton(Icons.AutoMirrored.Rounded.Undo, stringResource(R.string.game_undo), g.canUndo, null, vm::undo)
+            ActionButton(Icons.Rounded.Lightbulb, stringResource(R.string.game_hint), ui.hintsRemaining != 0 && !g.won && !ui.shuffling, ui.hintsRemaining, vm::hint)
+            ActionButton(Icons.Rounded.Shuffle, stringResource(R.string.game_shuffle), !g.won && !ui.shuffling, null, vm::shuffle)
+            ActionButton(Icons.AutoMirrored.Rounded.Undo, stringResource(R.string.game_undo), g.canUndo && !ui.shuffling, null, vm::undo)
         }
     }
 }

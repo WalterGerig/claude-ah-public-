@@ -37,7 +37,7 @@ sealed interface GameEvent {
     data class Matched(val a: Int, val b: Int, val faceA: Int, val faceB: Int, val points: Int, val combo: Int) : GameEvent
     data class Hint(val a: Int, val b: Int) : GameEvent
     data object NoHintsLeft : GameEvent
-    data class Shuffled(val solvable: Boolean) : GameEvent
+    data class Shuffled(val oldFaces: List<Int>, val newFaces: List<Int>, val solvable: Boolean) : GameEvent
     data object Undone : GameEvent
     data object Won : GameEvent
     data object Blocked : GameEvent
@@ -57,6 +57,8 @@ data class GameUiState(
     val bestScore: Int? = null,
     val newRecord: Boolean = false,
     val elapsedSeconds: Long = 0,
+    /** true while the shuffle animation runs – all input is locked. */
+    val shuffling: Boolean = false,
 ) {
     val won: Boolean get() = game?.won == true
 }
@@ -81,6 +83,7 @@ class GameViewModel(
     private var elapsedMs = 0L
     private var lastTick = SystemClock.elapsedRealtime()
     private var lastAutoSave = 0L
+    private var reduceMotion = false
 
     init {
         val mode = savedStateHandle.get<String>(ARG_MODE) ?: MODE_CONTINUE
@@ -89,6 +92,7 @@ class GameViewModel(
         val seed = savedStateHandle.get<Long>(ARG_SEED) ?: 0L
         viewModelScope.launch { start(mode, layout, difficulty, seed) }
         viewModelScope.launch { timerLoop() }
+        viewModelScope.launch { container.settings.settings.collect { reduceMotion = it.reduceMotion } }
     }
 
     // ------------------------------------------------------------ start / setup
@@ -169,7 +173,7 @@ class GameViewModel(
         val ui = _ui.value
         val s = ui.game ?: return
         val e = engine ?: return
-        if (ui.loading || ui.paused || s.won || i !in ui.free.indices || s.faces[i] < 0) return
+        if (ui.loading || ui.paused || ui.shuffling || s.won || i !in ui.free.indices || s.faces[i] < 0) return
         if (!ui.free[i]) {
             _events.tryEmit(GameEvent.Invalid(i))
             return
@@ -215,7 +219,7 @@ class GameViewModel(
     fun hint() {
         val s = _ui.value.game ?: return
         val e = engine ?: return
-        if (_ui.value.paused || s.won) return
+        if (_ui.value.paused || _ui.value.shuffling || s.won) return
         val outcome = e.hint(s.copy(elapsedMs = currentElapsed()))
         if (outcome == null) {
             _events.tryEmit(GameEvent.NoHintsLeft)
@@ -229,12 +233,16 @@ class GameViewModel(
     fun shuffle() {
         val s = _ui.value.game ?: return
         val e = engine ?: return
-        if (s.won || _ui.value.loading) return
+        if (s.won || _ui.value.loading || _ui.value.shuffling) return
+        _ui.update { it.copy(shuffling = true, selected = -1, hint = null) } // button disabled immediately
         viewModelScope.launch {
             val outcome = withContext(Dispatchers.Default) { e.shuffle(s.copy(elapsedMs = currentElapsed())) }
-            _ui.value = derive(outcome.state, e)
-            _events.tryEmit(GameEvent.Shuffled(outcome.solvable))
+            // The new arrangement is saved right away – closing the app mid-animation is safe.
             save(outcome.state)
+            _ui.value = derive(outcome.state, e).copy(shuffling = true)
+            _events.tryEmit(GameEvent.Shuffled(s.faces, outcome.state.faces, outcome.solvable))
+            delay(ShuffleTiming.total(outcome.state.remaining, reduceMotion) / 1_000_000L)
+            _ui.update { it.copy(shuffling = false) }
             if (_ui.value.blocked) _events.tryEmit(GameEvent.Blocked)
         }
     }
@@ -242,6 +250,7 @@ class GameViewModel(
     fun undo() {
         val s = _ui.value.game ?: return
         val e = engine ?: return
+        if (_ui.value.shuffling) return
         val next = e.undo(s.copy(elapsedMs = currentElapsed())) ?: return
         _ui.value = derive(next, e)
         _events.tryEmit(GameEvent.Undone)

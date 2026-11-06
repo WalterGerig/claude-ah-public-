@@ -20,13 +20,22 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+        // Fixed key for sideloading test builds, so new APKs install as updates (keeping your
+        // saved game). It is public on purpose – use your own secret key for the Play Store.
+        create("test") {
+            storeFile = file("test-signing.jks")
+            storePassword = "mahjongzen"
+            keyAlias = "mahjongzen"
+            keyPassword = "mahjongzen"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signed with the debug key so the release APK can be installed directly for personal use.
-            // Replace with your own signing config before publishing.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("test")
         }
     }
 

@@ -102,7 +102,7 @@
     <string name="stats_reset_confirm">Löschen</string>
 
     <string name="settings_title">Einstellungen</string>
-    <string name="section_sound">Ton</string>
+    <string name="section_sound">Ton &amp; Haptik</string>
     <string name="sound_effects">Soundeffekte</string>
     <string name="sound_volume">Lautstärke Effekte</string>
     <string name="music">Musik</string>
@@ -160,4 +160,7 @@
     <string name="wind_letter_south">S</string>
     <string name="wind_letter_west">W</string>
     <string name="wind_letter_north">N</string>
+    <string name="reduce_motion">Animationen reduzieren</string>
+    <string name="reduce_motion_desc">Kürzere, ruhigere Animationen (z. B. Überblenden statt Mischen-Animation)</string>
+    <string name="reset_view">Ansicht anpassen</string>
 </resources>

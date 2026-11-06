@@ -32,6 +32,7 @@ class SettingsRepository(context: Context) {
         val defaultDifficulty = stringPreferencesKey("default_difficulty")
         val themeMode = stringPreferencesKey("theme_mode")
         val largeTiles = booleanPreferencesKey("large_tiles")
+        val reduceMotion = booleanPreferencesKey("reduce_motion")
     }
 
     val settings: Flow<AppSettings> = store.data.map { p ->
@@ -49,6 +50,7 @@ class SettingsRepository(context: Context) {
             defaultDifficulty = enumOr(p[Keys.defaultDifficulty], d.defaultDifficulty),
             themeMode = enumOr(p[Keys.themeMode], d.themeMode),
             largeTiles = p[Keys.largeTiles] ?: d.largeTiles,
+            reduceMotion = p[Keys.reduceMotion] ?: d.reduceMotion,
         )
     }
 
@@ -64,6 +66,7 @@ class SettingsRepository(context: Context) {
     suspend fun setDefaultDifficulty(v: Difficulty) = store.edit { it[Keys.defaultDifficulty] = v.name }
     suspend fun setThemeMode(v: ThemeMode) = store.edit { it[Keys.themeMode] = v.name }
     suspend fun setLargeTiles(v: Boolean) = store.edit { it[Keys.largeTiles] = v }
+    suspend fun setReduceMotion(v: Boolean) = store.edit { it[Keys.reduceMotion] = v }
 
     private inline fun <reified T : Enum<T>> enumOr(name: String?, default: T): T =
         name?.let { n -> enumValues<T>().firstOrNull { it.name == n } } ?: default

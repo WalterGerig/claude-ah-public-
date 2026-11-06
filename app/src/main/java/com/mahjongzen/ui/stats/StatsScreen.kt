@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.DeleteOutline
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +52,7 @@ import com.mahjongzen.data.OverallStats
 import com.mahjongzen.data.db.LayoutStatRow
 import com.mahjongzen.game.layout.LayoutType
 import com.mahjongzen.game.model.Difficulty
+import com.mahjongzen.ui.components.ZenConfirmDialog
 import com.mahjongzen.ui.components.difficultyName
 import com.mahjongzen.ui.components.formatTime
 import com.mahjongzen.ui.components.layoutName
@@ -138,12 +137,13 @@ fun StatsScreen(container: AppContainer, onBack: () -> Unit) {
     }
 
     if (confirm) {
-        AlertDialog(
-            onDismissRequest = { confirm = false },
-            title = { Text(stringResource(R.string.stats_reset_title)) },
-            text = { Text(stringResource(R.string.stats_reset_message)) },
-            confirmButton = { TextButton(onClick = { vm.reset(); confirm = false }) { Text(stringResource(R.string.stats_reset_confirm)) } },
-            dismissButton = { TextButton(onClick = { confirm = false }) { Text(stringResource(R.string.cancel)) } },
+        ZenConfirmDialog(
+            title = stringResource(R.string.stats_reset_title),
+            message = stringResource(R.string.stats_reset_message),
+            confirm = stringResource(R.string.stats_reset_confirm),
+            onConfirm = { vm.reset(); confirm = false },
+            onDismiss = { confirm = false },
+            destructive = true,
         )
     }
 }
