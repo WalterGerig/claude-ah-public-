@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mahjong Zen</string>
+    <string name="home_tagline">Calm tile matching</string>
+
+    <!-- General -->
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Home -->
+    <string name="home_continue">Continue</string>
+    <string name="home_continue_detail">%1$s · %2$s · %3$d%%</string>
+    <string name="home_play">Play</string>
+    <string name="home_daily">Daily challenge</string>
+    <string name="home_daily_done">Daily challenge ✓</string>
+    <string name="home_level_select">Choose level</string>
+    <string name="home_statistics">Statistics</string>
+    <string name="home_settings">Settings</string>
+
+    <!-- Layouts -->
+    <string name="layout_turtle">Turtle</string>
+    <string name="layout_pyramid">Pyramid</string>
+    <string name="layout_fortress">Fortress</string>
+    <string name="layout_dragon">Dragon</string>
+    <string name="layout_bridge">Bridge</string>
+    <string name="layout_spider">Spider</string>
+    <string name="layout_procedural">Surprise</string>
+    <string name="layout_procedural_desc">New random shape for every seed</string>
+
+    <!-- Difficulty -->
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="difficulty_expert">Expert</string>
+
+    <!-- Level selection -->
+    <string name="level_select_title">Choose level</string>
+    <string name="level_layout">Layout</string>
+    <string name="level_difficulty">Difficulty</string>
+    <string name="level_seed_label">Seed (optional)</string>
+    <string name="level_seed_hint">Empty = random level</string>
+    <string name="level_start">Start</string>
+    <string name="level_best_score">Best: %d</string>
+    <string name="level_no_score">No win yet</string>
+    <string name="level_tiles">%1$d tiles · %2$d layers</string>
+    <string name="level_hints_unlimited">Unlimited hints</string>
+    <string name="level_hints_limited">%d hints</string>
+
+    <!-- Game -->
+    <string name="game_score">Score</string>
+    <string name="game_time">Time</string>
+    <string name="game_moves">Moves</string>
+    <string name="game_pairs">Pairs</string>
+    <string name="game_tiles">Tiles</string>
+    <string name="game_combo">Combo ×%d</string>
+    <string name="game_points">+%d</string>
+    <string name="game_hint">Hint</string>
+    <string name="game_shuffle">Shuffle</string>
+    <string name="game_undo">Undo</string>
+    <string name="game_pause">Pause</string>
+    <string name="game_seed">Seed %s</string>
+    <string name="game_loading">Shuffling tiles…</string>
+    <string name="game_daily">Daily</string>
+    <string name="hint_none_left">No hints left</string>
+    <string name="shuffle_unsolvable">No solvable arrangement exists – the tiles were mixed randomly.</string>
+    <string name="reset_zoom">Reset zoom</string>
+
+    <!-- Pause -->
+    <string name="pause_title">Paused</string>
+    <string name="pause_resume">Resume</string>
+    <string name="pause_restart">Restart level</string>
+    <string name="pause_new_game">New game</string>
+    <string name="pause_main_menu">Main menu</string>
+    <string name="pause_copy_seed">Copy seed</string>
+    <string name="seed_copied">Seed copied</string>
+
+    <!-- Blocked -->
+    <string name="blocked_title">No moves left</string>
+    <string name="blocked_message">There are no more matching free pairs.</string>
+    <string name="blocked_shuffle">Shuffle</string>
+    <string name="blocked_undo">Undo</string>
+    <string name="blocked_restart">Restart</string>
+
+    <!-- Win -->
+    <string name="win_title">Board cleared!</string>
+    <string name="win_score">Score</string>
+    <string name="win_time_bonus">Time bonus</string>
+    <string name="win_time">Time</string>
+    <string name="win_combo">Longest combo</string>
+    <string name="win_new_record">New highscore!</string>
+    <string name="win_next">Next level</string>
+    <string name="win_replay">Play again</string>
+    <string name="win_menu">Menu</string>
+    <string name="win_stars">%d of 3 stars</string>
+
+    <!-- Statistics -->
+    <string name="stats_title">Statistics</string>
+    <string name="stats_played">Played</string>
+    <string name="stats_won">Won</string>
+    <string name="stats_win_rate">Win rate</string>
+    <string name="stats_longest_combo">Longest combo</string>
+    <string name="stats_daily_streak">Daily streak</string>
+    <string name="stats_days">%d days</string>
+    <string name="stats_per_layout">By layout and difficulty</string>
+    <string name="stats_best_time">Best time</string>
+    <string name="stats_highscore">Highscore</string>
+    <string name="stats_empty">No games played yet.</string>
+    <string name="stats_reset">Reset statistics</string>
+    <string name="stats_reset_title">Reset statistics?</string>
+    <string name="stats_reset_message">All statistics and highscores will be deleted permanently.</string>
+    <string name="stats_reset_confirm">Delete</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="section_sound">Sound</string>
+    <string name="sound_effects">Sound effects</string>
+    <string name="sound_volume">Effects volume</string>
+    <string name="music">Music</string>
+    <string name="music_volume">Music volume</string>
+    <string name="sound_note">All sounds and music are synthesised by the app itself (procedural, royalty-free placeholders).</string>
+    <string name="section_gameplay">Gameplay</string>
+    <string name="haptics">Vibration / haptics</string>
+    <string name="highlight_free">Highlight free tiles</string>
+    <string name="highlight_free_desc">Blocked tiles are slightly darkened</string>
+    <string name="show_timer">Show timer</string>
+    <string name="default_difficulty">Default difficulty</string>
+    <string name="section_appearance">Appearance</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="background">Table</string>
+    <string name="bg_felt">Green felt</string>
+    <string name="bg_dark_wood">Dark wood</string>
+    <string name="bg_bamboo">Bamboo</string>
+    <string name="bg_night">Night</string>
+    <string name="bg_gradient">Gradient</string>
+    <string name="tile_style">Tile design</string>
+    <string name="style_classic">Classic</string>
+    <string name="style_modern">Modern</string>
+    <string name="style_high_contrast">High contrast</string>
+    <string name="large_tiles">Larger tiles</string>
+    <string name="large_tiles_desc">Bigger tiles; large boards can be moved with one finger</string>
+    <string name="section_language">Language</string>
+    <string name="language_system">System</string>
+    <string name="section_data">Data</string>
+    <string name="about">Offline · no ads · no tracking</string>
+
+    <!-- Tiles (accessibility) -->
+    <string name="face_dot">%d of circles</string>
+    <string name="face_bamboo">%d of bamboo</string>
+    <string name="face_char">%d of characters</string>
+    <string name="wind_east">East wind</string>
+    <string name="wind_south">South wind</string>
+    <string name="wind_west">West wind</string>
+    <string name="wind_north">North wind</string>
+    <string name="dragon_red">Red dragon</string>
+    <string name="dragon_green">Green dragon</string>
+    <string name="dragon_white">White dragon</string>
+    <string name="flower_plum">Flower: plum</string>
+    <string name="flower_orchid">Flower: orchid</string>
+    <string name="flower_chrysanthemum">Flower: chrysanthemum</string>
+    <string name="flower_bamboo">Flower: bamboo</string>
+    <string name="season_spring">Season: spring</string>
+    <string name="season_summer">Season: summer</string>
+    <string name="season_autumn">Season: autumn</string>
+    <string name="season_winter">Season: winter</string>
+    <string name="tile_free">%s, free</string>
+    <string name="board_description">Board with %1$d tiles, %2$d possible pairs</string>
+    <string name="wind_letter_east">E</string>
+    <string name="wind_letter_south">S</string>
+    <string name="wind_letter_west">W</string>
+    <string name="wind_letter_north">N</string>
+</resources>

@@ -46,7 +46,8 @@ object ProceduralLayout {
         while (filled < baseTarget && guard++ < 200) {
             val w = rng.nextInt(2, half + 1)
             val h = rng.nextInt(2, s.rows + 1)
-            val x0 = rng.nextInt(0, half - w + 1)
+            // The first shape always touches the mirror axis, so both halves form one piece.
+            val x0 = if (guard == 1) half - w else rng.nextInt(0, half - w + 1)
             val y0 = rng.nextInt(0, s.rows - h + 1)
             val ellipse = rng.nextBoolean()
             for (c in x0 until x0 + w) for (r in y0 until y0 + h) {
@@ -58,8 +59,7 @@ object ProceduralLayout {
                 if (!mask[c][r] && filled < baseTarget) { mask[c][r] = true; filled++ }
             }
         }
-        // ensure connection to the mirror axis so the shape is one piece
-        for (r in 0 until s.rows) if (mask[half - 2].getOrElse(r) { false }) mask[half - 1][r] = true
+        if (!isConnected(mask, half, s.rows)) return null
 
         val slots = LinkedHashSet<Slot>()
         for (c in 0 until half) for (r in 0 until s.rows) if (mask[c][r]) {
@@ -92,6 +92,22 @@ object ProceduralLayout {
         }
         if (slots.size < s.target * 0.8) return null
         return slots.toList()
+    }
+
+    /** The mirrored base layer must be one connected shape (4-neighbourhood). */
+    private fun isConnected(mask: Array<BooleanArray>, half: Int, rows: Int): Boolean {
+        val cols = half * 2
+        fun at(c: Int, r: Int) = c in 0 until cols && r in 0 until rows && mask[if (c < half) c else cols - 1 - c][r]
+        val cells = (0 until cols).flatMap { c -> (0 until rows).filter { at(c, it) }.map { c to it } }
+        if (cells.isEmpty()) return false
+        val seen = HashSet<Pair<Int, Int>>()
+        val stack = ArrayDeque(listOf(cells.first()))
+        while (stack.isNotEmpty()) {
+            val (c, r) = stack.removeLast()
+            if (!seen.add(c to r)) continue
+            for ((dc, dr) in listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)) if (at(c + dc, r + dr)) stack.add(c + dc to r + dr)
+        }
+        return seen.size == cells.size
     }
 
     /** Every quarter of the tile must lie on a tile of the layer below. */

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mahjong Zen</string>
+    <string name="home_tagline">Ruhiges Kachel-Legen</string>
+
+    <string name="back">Zurück</string>
+    <string name="close">Schließen</string>
+    <string name="cancel">Abbrechen</string>
+
+    <string name="home_continue">Weiterspielen</string>
+    <string name="home_continue_detail">%1$s · %2$s · %3$d%%</string>
+    <string name="home_play">Spielen</string>
+    <string name="home_daily">Tägliche Herausforderung</string>
+    <string name="home_daily_done">Tägliche Herausforderung ✓</string>
+    <string name="home_level_select">Level-Auswahl</string>
+    <string name="home_statistics">Statistiken</string>
+    <string name="home_settings">Einstellungen</string>
+
+    <string name="layout_turtle">Schildkröte</string>
+    <string name="layout_pyramid">Pyramide</string>
+    <string name="layout_fortress">Festung</string>
+    <string name="layout_dragon">Drache</string>
+    <string name="layout_bridge">Brücke</string>
+    <string name="layout_spider">Spinne</string>
+    <string name="layout_procedural">Überraschung</string>
+    <string name="layout_procedural_desc">Neue Zufallsform für jeden Seed</string>
+
+    <string name="difficulty_easy">Leicht</string>
+    <string name="difficulty_medium">Mittel</string>
+    <string name="difficulty_hard">Schwer</string>
+    <string name="difficulty_expert">Experte</string>
+
+    <string name="level_select_title">Level-Auswahl</string>
+    <string name="level_layout">Layout</string>
+    <string name="level_difficulty">Schwierigkeit</string>
+    <string name="level_seed_label">Seed (optional)</string>
+    <string name="level_seed_hint">Leer = zufälliges Level</string>
+    <string name="level_start">Starten</string>
+    <string name="level_best_score">Bestwert: %d</string>
+    <string name="level_no_score">Noch kein Sieg</string>
+    <string name="level_tiles">%1$d Kacheln · %2$d Ebenen</string>
+    <string name="level_hints_unlimited">Unbegrenzte Hinweise</string>
+    <string name="level_hints_limited">%d Hinweise</string>
+
+    <string name="game_score">Punkte</string>
+    <string name="game_time">Zeit</string>
+    <string name="game_moves">Züge</string>
+    <string name="game_pairs">Paare</string>
+    <string name="game_tiles">Kacheln</string>
+    <string name="game_combo">Combo ×%d</string>
+    <string name="game_points">+%d</string>
+    <string name="game_hint">Hinweis</string>
+    <string name="game_shuffle">Mischen</string>
+    <string name="game_undo">Rückgängig</string>
+    <string name="game_pause">Pause</string>
+    <string name="game_seed">Seed %s</string>
+    <string name="game_loading">Kacheln werden gemischt …</string>
+    <string name="game_daily">Täglich</string>
+    <string name="hint_none_left">Keine Hinweise mehr</string>
+    <string name="shuffle_unsolvable">Es gibt keine lösbare Anordnung mehr – die Kacheln wurden zufällig gemischt.</string>
+    <string name="reset_zoom">Zoom zurücksetzen</string>
+
+    <string name="pause_title">Pause</string>
+    <string name="pause_resume">Weiter</string>
+    <string name="pause_restart">Level neu starten</string>
+    <string name="pause_new_game">Neues Spiel</string>
+    <string name="pause_main_menu">Hauptmenü</string>
+    <string name="pause_copy_seed">Seed kopieren</string>
+    <string name="seed_copied">Seed kopiert</string>
+
+    <string name="blocked_title">Keine Züge mehr</string>
+    <string name="blocked_message">Es gibt keine passenden freien Paare mehr.</string>
+    <string name="blocked_shuffle">Mischen</string>
+    <string name="blocked_undo">Rückgängig</string>
+    <string name="blocked_restart">Neu starten</string>
+
+    <string name="win_title">Geschafft!</string>
+    <string name="win_score">Punkte</string>
+    <string name="win_time_bonus">Zeitbonus</string>
+    <string name="win_time">Zeit</string>
+    <string name="win_combo">Längste Combo</string>
+    <string name="win_new_record">Neuer Highscore!</string>
+    <string name="win_next">Nächstes Level</string>
+    <string name="win_replay">Nochmal spielen</string>
+    <string name="win_menu">Menü</string>
+    <string name="win_stars">%d von 3 Sternen</string>
+
+    <string name="stats_title">Statistiken</string>
+    <string name="stats_played">Gespielt</string>
+    <string name="stats_won">Gewonnen</string>
+    <string name="stats_win_rate">Siegquote</string>
+    <string name="stats_longest_combo">Längste Combo</string>
+    <string name="stats_daily_streak">Tages-Serie</string>
+    <string name="stats_days">%d Tage</string>
+    <string name="stats_per_layout">Nach Layout und Schwierigkeit</string>
+    <string name="stats_best_time">Beste Zeit</string>
+    <string name="stats_highscore">Highscore</string>
+    <string name="stats_empty">Noch keine Spiele gespielt.</string>
+    <string name="stats_reset">Statistiken zurücksetzen</string>
+    <string name="stats_reset_title">Statistiken zurücksetzen?</string>
+    <string name="stats_reset_message">Alle Statistiken und Highscores werden dauerhaft gelöscht.</string>
+    <string name="stats_reset_confirm">Löschen</string>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="section_sound">Ton</string>
+    <string name="sound_effects">Soundeffekte</string>
+    <string name="sound_volume">Lautstärke Effekte</string>
+    <string name="music">Musik</string>
+    <string name="music_volume">Lautstärke Musik</string>
+    <string name="sound_note">Alle Sounds und die Musik werden von der App selbst erzeugt (prozedurale Synthese, lizenzfreie Platzhalter).</string>
+    <string name="section_gameplay">Spiel</string>
+    <string name="haptics">Vibration / Haptik</string>
+    <string name="highlight_free">Freie Kacheln hervorheben</string>
+    <string name="highlight_free_desc">Blockierte Kacheln werden leicht abgedunkelt</string>
+    <string name="show_timer">Timer anzeigen</string>
+    <string name="default_difficulty">Standard-Schwierigkeit</string>
+    <string name="section_appearance">Darstellung</string>
+    <string name="theme">Design</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="background">Tisch</string>
+    <string name="bg_felt">Grüner Filz</string>
+    <string name="bg_dark_wood">Dunkles Holz</string>
+    <string name="bg_bamboo">Bambus</string>
+    <string name="bg_night">Nacht</string>
+    <string name="bg_gradient">Farbverlauf</string>
+    <string name="tile_style">Kachel-Design</string>
+    <string name="style_classic">Klassisch</string>
+    <string name="style_modern">Modern</string>
+    <string name="style_high_contrast">Hoher Kontrast</string>
+    <string name="large_tiles">Größere Kacheln</string>
+    <string name="large_tiles_desc">Größere Kacheln; große Felder lassen sich mit einem Finger verschieben</string>
+    <string name="section_language">Sprache</string>
+    <string name="language_system">System</string>
+    <string name="section_data">Daten</string>
+    <string name="about">Offline · keine Werbung · kein Tracking</string>
+
+    <string name="face_dot">%d Kreise</string>
+    <string name="face_bamboo">%d Bambus</string>
+    <string name="face_char">%d Zeichen</string>
+    <string name="wind_east">Ostwind</string>
+    <string name="wind_south">Südwind</string>
+    <string name="wind_west">Westwind</string>
+    <string name="wind_north">Nordwind</string>
+    <string name="dragon_red">Roter Drache</string>
+    <string name="dragon_green">Grüner Drache</string>
+    <string name="dragon_white">Weißer Drache</string>
+    <string name="flower_plum">Blume: Pflaume</string>
+    <string name="flower_orchid">Blume: Orchidee</string>
+    <string name="flower_chrysanthemum">Blume: Chrysantheme</string>
+    <string name="flower_bamboo">Blume: Bambus</string>
+    <string name="season_spring">Jahreszeit: Frühling</string>
+    <string name="season_summer">Jahreszeit: Sommer</string>
+    <string name="season_autumn">Jahreszeit: Herbst</string>
+    <string name="season_winter">Jahreszeit: Winter</string>
+    <string name="tile_free">%s, frei</string>
+    <string name="board_description">Spielfeld mit %1$d Kacheln, %2$d mögliche Paare</string>
+    <string name="wind_letter_east">O</string>
+    <string name="wind_letter_south">S</string>
+    <string name="wind_letter_west">W</string>
+    <string name="wind_letter_north">N</string>
+</resources>

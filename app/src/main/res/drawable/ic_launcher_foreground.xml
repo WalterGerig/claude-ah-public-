@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Self-drawn launcher icon: two stacked ivory tiles with a red "middle" dragon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- back tile -->
+    <path android:fillColor="#FF2F6B4F" android:pathData="M42,30h26a5,5 0,0 1,5 5v36a5,5 0,0 1,-5 5h-26a5,5 0,0 1,-5 -5v-36a5,5 0,0 1,5 -5z" />
+    <path android:fillColor="#FFCDBF9F" android:pathData="M39,28h26a5,5 0,0 1,5 5v36a5,5 0,0 1,-5 5h-26a5,5 0,0 1,-5 -5v-36a5,5 0,0 1,5 -5z" />
+    <!-- front face -->
+    <path android:fillColor="#FFFBF5E6" android:pathData="M37,26h26a5,5 0,0 1,5 5v36a5,5 0,0 1,-5 5h-26a5,5 0,0 1,-5 -5v-36a5,5 0,0 1,5 -5z" />
+    <!-- red dragon: box with vertical stroke -->
+    <path android:strokeColor="#FFB3261E" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M40,40h20v13h-20z" />
+    <path android:strokeColor="#FFB3261E" android:strokeWidth="4" android:strokeLineCap="round"
+        android:pathData="M50,32v34" />
+</vector>

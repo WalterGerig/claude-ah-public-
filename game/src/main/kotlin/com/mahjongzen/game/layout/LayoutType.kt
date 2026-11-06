@@ -151,10 +151,13 @@ private fun spider(d: Difficulty) = layout {
     val bx = 2 * legLen + 2
     val by = 6
     rect(0, bx, by, 4, 5)
-    rect(1, bx + 1, by + 1, 3, 4)
-    if (d != Difficulty.EASY) rect(2, bx + 2, by + 2, 2, 3)
-    if (d == Difficulty.HARD || d == Difficulty.EXPERT) rect(3, bx + 3, by + 3, 1, 2)
-    if (d == Difficulty.EXPERT) tile(bx + 3, by + 4, 4)
+    rect(1, bx + 2, by + 2, 2, 3)
+    if (d != Difficulty.EASY) rect(2, bx + 3, by + 3, 1, 2)
+    if (d == Difficulty.HARD || d == Difficulty.EXPERT) tile(bx + 3, by + 4, 3)
+    // abdomen
+    rect(0, bx + 1, by + 10, 3, 3)
+    rect(1, bx + 2, by + 11, 2, 2)
+    if (d != Difficulty.EASY) tile(bx + 3, by + 12, 2)
     // head
     rect(0, bx + 2, by - 4, 2, 2)
     if (d != Difficulty.EASY) tile(bx + 3, by - 3, 1)
